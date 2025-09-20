@@ -49,9 +49,18 @@ function displayDialog(){
         </div>
     </form> `;
 }
+function deleteTask(taskId){
+    let div = document.getElementById("task"+taskId);
+    div.remove();
+    delete tasks[taskId];
+    console.log(tasks)
+   
+}
+
 function displayTask(taskId,taskform){
     let outer_div = document.createElement("div");
     outer_div.classList.add("outer_div");
+    outer_div.setAttribute("id","task"+taskId);
     outer_div.style.display = "flex";
     let right_div = document.createElement("div");
     right_div.classList.add("right_div");
@@ -62,8 +71,15 @@ function displayTask(taskId,taskform){
     let p = document.createElement("p");
     let bin_img = document.createElement("img");
     bin_img.src = bin;
+    bin_img.addEventListener("click",()=>{
+        deleteTask(taskId);
+    })
+    
     let view_img = document.createElement("img");
     view_img.src = view;
+    view_img.addEventListener("click",()=>{
+        viewTask(taskId);
+    })
 
     left_div.appendChild(p);
 
@@ -93,6 +109,7 @@ function displayTask(taskId,taskform){
     outer_div.appendChild(right_div);
     taskform.appendChild(outer_div);
 }
+
 export function inboxPage(){
     let content = document.getElementById("content");
     let div = document.createElement("div");
