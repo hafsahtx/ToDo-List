@@ -6,7 +6,13 @@ let tasks = {};
 
 function createTaskObj(){
     let form = document.getElementById("getTaskForm");
-    let size = Object.keys(tasks).length;
+    let size;
+    if(Object.keys(tasks).length===0){
+        size = 0;
+    }else{
+        size = parseInt(Object.keys(tasks)[Object.keys(tasks).length-1]);
+        console.log(`size is ${size}`);
+    }
     let task = {
         id: size+1,
         title: form.elements["title"].value,
@@ -67,6 +73,7 @@ function displayTask(taskId,taskform){
     let left_div = document.createElement("div");
     left_div.classList.add("left_div");
     let input = document.createElement("input");
+    input.setAttribute("id","input_task"+taskId);
     let label = document.createElement("label");
     let p = document.createElement("p");
     let bin_img = document.createElement("img");
