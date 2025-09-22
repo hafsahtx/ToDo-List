@@ -63,6 +63,21 @@ function deleteTask(taskId){
    
 }
 
+function viewTask(taskId){
+    let dialog = document.getElementById("taskDialog");
+    let title = document.getElementById("title");
+    let description = document.getElementById("description");
+    let dueDate = document.getElementById("dueDate");
+    let priority = document.getElementById("priority");
+    title.value = tasks[taskId].title;
+    description.value = tasks[taskId].description;
+    dueDate.value = tasks[taskId].dueDate;
+    priority.value = tasks[taskId].priority;
+    dialog.showModal();
+
+
+}
+
 function displayTask(taskId,taskform){
     let outer_div = document.createElement("div");
     outer_div.classList.add("outer_div");
@@ -151,6 +166,7 @@ export function inboxPage(){
     div.appendChild(add_task_div);
 
     let dialog = document.createElement("dialog");
+    dialog.setAttribute("id","taskDialog");
     add_img.addEventListener("click",()=>{
         dialog.innerHTML = displayDialog();
         div.appendChild(dialog);
