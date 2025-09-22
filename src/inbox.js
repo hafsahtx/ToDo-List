@@ -2,7 +2,10 @@ import add from "./images/add.svg";
 import bin from "./images/delete.svg";
 import view from "./images/visibility.svg";
 import calender from "./images/calender.svg";
+
 let tasks = {};
+let taskId;
+let state = "create";
 
 function createTaskObj(){
     let form = document.getElementById("getTaskForm");
@@ -55,15 +58,42 @@ function displayDialog(){
         </div>
     </form> `;
 }
-function deleteTask(taskId){
+function deleteTask(){
     let div = document.getElementById("task"+taskId);
     div.remove();
     delete tasks[taskId];
     console.log(tasks)
    
 }
+function updateTask(){
+    console.log("inside update");
+    console.log(taskId);
+    let form = document.getElementById("getTaskForm");
+    tasks[taskId].title = form.elements["title"].value;
+    tasks[taskId].description = form.elements["description"].value;
+    tasks[taskId].dueDate = form.elements["dueDate"].value;
+    tasks[taskId].priority = form.elements["priority"].value;
+    console.log(`after`);
+    console.log(tasks);
+    let label = document.querySelector(`label[for="checkbox${taskId}"]`);
+    label.textContent = tasks[taskId].title;
+    let left_div = document.getElementById("left_div"+taskId);
+    if(tasks[taskId].dueDate!== ""){
+        let div = document.createElement("div");
+        div.style.display = "flex";
+        let calender_img = document.createElement("img");
+        calender_img.src = calender;
+        div.appendChild(calender_img);
+        let p = document.createElement("p");
+        p.textContent = tasks[taskId].dueDate;
+        div.appendChild(p)
+        left_div.appendChild(div);
+    }
+    state="create";
+}
 
-function viewTask(taskId){
+function viewTask(){
+    state="update";
     let dialog = document.getElementById("taskDialog");
     let title = document.getElementById("title");
     let description = document.getElementById("description");
@@ -74,11 +104,10 @@ function viewTask(taskId){
     dueDate.value = tasks[taskId].dueDate;
     priority.value = tasks[taskId].priority;
     dialog.showModal();
-
-
+    console.log(`taskId inside viewTask ${taskId}`); 
 }
 
-function displayTask(taskId,taskform){
+function displayTask(taskform){
     let outer_div = document.createElement("div");
     outer_div.classList.add("outer_div");
     outer_div.setAttribute("id","task"+taskId);
@@ -87,9 +116,11 @@ function displayTask(taskId,taskform){
     right_div.classList.add("right_div");
     let left_div = document.createElement("div");
     left_div.classList.add("left_div");
+    left_div.setAttribute("id","left_div"+taskId);
     let input = document.createElement("input");
-    input.setAttribute("id","input_task"+taskId);
+    input.setAttribute("id","checkbox"+taskId);
     let label = document.createElement("label");
+    label.setAttribute("for","checkbox"+taskId);
     let p = document.createElement("p");
     let bin_img = document.createElement("img");
     bin_img.src = bin;
@@ -100,6 +131,8 @@ function displayTask(taskId,taskform){
     let view_img = document.createElement("img");
     view_img.src = view;
     view_img.addEventListener("click",()=>{
+        console.log(`before`);
+        console.log(tasks);
         viewTask(taskId);
     })
 
@@ -173,9 +206,15 @@ export function inboxPage(){
         dialog.showModal();
         let submitBtn = document.getElementById("submitBtn");
         submitBtn.addEventListener("click",(e)=>{
+            console.log(`taskId inside submitBtn ${taskId}`);
             e.preventDefault();
-            let taskId = createTaskObj();
-            displayTask(taskId,taskform);
+            if(state==="create"){
+                taskId = createTaskObj();
+                displayTask(taskform);
+            }else{
+                updateTask();
+            }
+            
             dialog.close();
         });
     });
