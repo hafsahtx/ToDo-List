@@ -6,6 +6,34 @@ import calender from "./images/calender.svg";
 let tasks = {};
 let taskId;
 let state = "create";
+let STORAGE_KEY = "inboxtasks";
+
+function initializeStorage(){
+    let storedData = localStorage.getItem(STORAGE_KEY);
+    if(storedData){
+        tasks = JSON.parse(storedData);
+        console.log("existing data loaded")
+       //s loadToScreen();
+
+    }else{
+        tasks = {};
+        console.log("new data structure initialized")
+        saveData();
+    }
+
+}
+
+function saveData(){
+    localStorage.setItem(STORAGE_KEY,JSON.stringify(tasks));
+    console.log("current state saved to local storage")
+}
+
+function loadToScreen(){
+    tasks.forEach(task => {
+        task.id
+        
+    });
+}
 
 function createTaskObj(){
     let form = document.getElementById("getTaskForm");
@@ -62,6 +90,7 @@ function deleteTask(){
     let div = document.getElementById("task"+taskId);
     div.remove();
     delete tasks[taskId];
+   // saveData();
     console.log(tasks)
    
 }
@@ -75,24 +104,17 @@ function updateTask(){
     tasks[taskId].priority = form.elements["priority"].value;
     console.log(`after`);
     console.log(tasks);
+   // saveData();
     let label = document.querySelector(`label[for="checkbox${taskId}"]`);
     label.textContent = tasks[taskId].title;
-    let left_div = document.getElementById("left_div"+taskId);
     if(tasks[taskId].dueDate!== ""){
-        let div = document.createElement("div");
-        div.style.display = "flex";
-        let calender_img = document.createElement("img");
-        calender_img.src = calender;
-        div.appendChild(calender_img);
-        let p = document.createElement("p");
+        let p = document.getElementById("due_date_p"+taskId);
         p.textContent = tasks[taskId].dueDate;
-        div.appendChild(p)
-        left_div.appendChild(div);
     }
     state="create";
 }
 
-function viewTask(){
+function viewTask(taskId){
     state="update";
     let dialog = document.getElementById("taskDialog");
     let title = document.getElementById("title");
@@ -107,7 +129,8 @@ function viewTask(){
     console.log(`taskId inside viewTask ${taskId}`); 
 }
 
-function displayTask(taskform){
+function displayTask(){
+    console.log("inside display task....");
     let outer_div = document.createElement("div");
     outer_div.classList.add("outer_div");
     outer_div.setAttribute("id","task"+taskId);
@@ -145,6 +168,7 @@ function displayTask(taskform){
         calender_img.src = calender;
         div.appendChild(calender_img);
         let p = document.createElement("p");
+        p.setAttribute("id","due_date_p"+taskId);
         p.textContent = tasks[taskId].dueDate;
         div.appendChild(p)
         left_div.appendChild(div);
@@ -162,10 +186,14 @@ function displayTask(taskform){
     p.appendChild(label);
     outer_div.appendChild(left_div);
     outer_div.appendChild(right_div);
-    taskform.appendChild(outer_div);
+
+    let div_inbox = document.querySelector(".page_body")
+    let add_task_div = document.querySelector(".add_task_div");
+    div_inbox.insertBefore(outer_div, add_task_div);
 }
 
 export function inboxPage(){
+    //initializeStorage();
     let content = document.getElementById("content");
     let div = document.createElement("div");
     div.classList.add("page_body");
@@ -175,10 +203,12 @@ export function inboxPage(){
     div.style.padding = "8px";
 
     let title = document.createElement("h1");
+    title.classList.add("title_inbox");
     title.textContent = "Inbox";
     
     let add_task_div = document.createElement("div");
     add_task_div.style.display = "flex";
+    add_task_div.classList.add("add_task_div");
 
 
     let add_img = document.createElement("img");
@@ -189,13 +219,9 @@ export function inboxPage(){
     p.textContent = "Add task";
     p.style.color = "#999999";
 
-    let taskform = document.createElement("form");
-    taskform.setAttribute("id","taskform");
-
     add_task_div.appendChild(p);
 
     div.appendChild(title);
-    div.appendChild(taskform);
     div.appendChild(add_task_div);
 
     let dialog = document.createElement("dialog");
@@ -209,9 +235,11 @@ export function inboxPage(){
             console.log(`taskId inside submitBtn ${taskId}`);
             e.preventDefault();
             if(state==="create"){
+                console.log("create")
                 taskId = createTaskObj();
-                displayTask(taskform);
+                displayTask();
             }else{
+                console.log("update")
                 updateTask();
             }
             
