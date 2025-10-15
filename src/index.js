@@ -1,9 +1,16 @@
 import "./styles.css";
-import {greeting} from "./greeting.js";
-import odinImage from "./odin.png";
+import { aboutPage } from "./today";
+import { inboxPage } from "./inbox";
 
-console.log(greeting);
-const image = document.createElement("img");
-image.src = odinImage;
+inboxPage();
 
-document.body.appendChild(image);
+
+let about = document.querySelector(".add_task");
+let inbox = document.querySelector(".inbox");
+
+inbox.addEventListener("click",()=>{
+    inboxPage();
+})
+about.addEventListener("click",()=>{
+    aboutPage();
+})
